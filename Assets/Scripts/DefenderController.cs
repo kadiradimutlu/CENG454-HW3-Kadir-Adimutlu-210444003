@@ -10,6 +10,9 @@ public class DefenderController : MonoBehaviour
     public float mouseSensitivity = 2f;
     public Transform playerCamera;
 
+    [Header("Shooting Settings")]
+    public Transform bulletSpawnPoint;
+
     private Rigidbody rb;
     private Vector3 moveInput;
     private float verticalLookRotation = 0f;
@@ -40,7 +43,6 @@ public class DefenderController : MonoBehaviour
 
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
-
         moveInput = (transform.right * moveX + transform.forward * moveZ).normalized;
 
         if (Input.GetButtonDown("Fire1"))
@@ -57,6 +59,14 @@ public class DefenderController : MonoBehaviour
 
     void Shoot()
     {
-        Debug.Log("Player shot the weapon towards the crosshair!");
+        GameObject bullet = BulletPool.Instance.GetBullet();
+        
+        if (bullet != null && bulletSpawnPoint != null)
+        {
+            bullet.transform.position = bulletSpawnPoint.position;
+            bullet.transform.rotation = bulletSpawnPoint.rotation;
+            
+            bullet.SetActive(true);
+        }
     }
 }
