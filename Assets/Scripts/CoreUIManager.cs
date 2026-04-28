@@ -1,5 +1,5 @@
 using UnityEngine;
-using TMPro;
+using TMPro; 
 
 public class CoreUIManager : MonoBehaviour
 {
@@ -10,7 +10,6 @@ public class CoreUIManager : MonoBehaviour
         EnergyCore.OnCoreHealthChanged += UpdateHealthUI;
     }
 
-    [cite_start]
     void OnDisable()
     {
         EnergyCore.OnCoreHealthChanged -= UpdateHealthUI;

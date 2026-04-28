@@ -15,6 +15,5 @@ public class GameManager : MonoBehaviour
     private void HandleGameOver()
     {
         Debug.Log("GAME OVER! The core has been breached.");
-        [cite_start]
     }
 }

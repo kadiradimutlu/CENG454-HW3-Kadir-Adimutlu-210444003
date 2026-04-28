@@ -6,7 +6,6 @@ public class EnergyCore : MonoBehaviour, IDamageable
     public int maxHealth = 100;
     private int currentHealth;
 
-    [cite_start]
     public static event Action<int, int> OnCoreHealthChanged;
     public static event Action OnCoreDestroyed;
 
