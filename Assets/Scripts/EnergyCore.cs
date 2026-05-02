@@ -17,14 +17,17 @@ public class EnergyCore : MonoBehaviour, IDamageable
 
     public void TakeDamage(int amount)
     {
+        if (currentHealth <= 0) return;
+
         currentHealth -= amount;
+        
+        if (currentHealth < 0) currentHealth = 0; 
         
         OnCoreHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        if (currentHealth <= 0)
+        if (currentHealth == 0)
         {
             OnCoreDestroyed?.Invoke();
-            Debug.Log("Core Destroyed! Game Over.");
         }
     }
 }
