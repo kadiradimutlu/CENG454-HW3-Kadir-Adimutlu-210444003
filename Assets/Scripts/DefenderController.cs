@@ -29,6 +29,8 @@ public class DefenderController : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0f) return; 
+        
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
