@@ -1025,7 +1025,7 @@ GameObject:
   - component: {fileID: 697527317}
   m_Layer: 0
   m_Name: EnergyCore
-  m_TagString: Untagged
+  m_TagString: EnergyCore
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
