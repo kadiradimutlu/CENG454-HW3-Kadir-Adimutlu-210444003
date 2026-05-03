@@ -4,8 +4,10 @@ public class Obstacle : MonoBehaviour
 {
     public float speed = 5f;
     private Transform target;
-    
     private IMovementStrategy currentStrategy;
+
+    public GameObject explosionPrefab;
+    public int scoreValue = 10;
 
     void Start()
     {
@@ -28,12 +30,10 @@ public class Obstacle : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z))
         {
             SetStrategy(new ZigzagMovement());
-            Debug.Log("Hareket Stratejisi Değişti: ZIGZAG");
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
             SetStrategy(new DirectMovement());
-            Debug.Log("Hareket Stratejisi Değişti: DIRECT (DOĞRUDAN)");
         }
     }
 
@@ -57,6 +57,16 @@ public class Obstacle : MonoBehaviour
         {
             other.gameObject.SetActive(false); 
             
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddScore(scoreValue);
+            }
+
+            if (explosionPrefab != null)
+            {
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            }
+
             Destroy(gameObject); 
         }
     }
