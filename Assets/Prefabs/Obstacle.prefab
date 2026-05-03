@@ -127,6 +127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Obstacle
   speed: 5
+  explosionPrefab: {fileID: 7016694533610097572, guid: 1da053c4a1b177b4fbbf6ad8395752cc, type: 3}
+  scoreValue: 10
 --- !u!54 &7005099799269300917
 Rigidbody:
   m_ObjectHideFlags: 0
