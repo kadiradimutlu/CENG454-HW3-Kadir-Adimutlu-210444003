@@ -16,8 +16,6 @@ public class Obstacle : MonoBehaviour
         {
             target = core.transform;
         }
-
-        SetStrategy(new DirectMovement());
     }
 
     void Update()
@@ -25,15 +23,6 @@ public class Obstacle : MonoBehaviour
         if (currentStrategy != null && target != null)
         {
             currentStrategy.Move(transform, target, speed);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            SetStrategy(new ZigzagMovement());
-        }
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            SetStrategy(new DirectMovement());
         }
     }
 

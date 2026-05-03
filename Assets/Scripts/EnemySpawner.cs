@@ -2,19 +2,16 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [Header("Spawner Settings")]
     public GameObject enemyPrefab;
-    public float spawnInterval = 3f;
-
-    [Header("Spawn Points")]
     public Transform[] spawnPoints;
-
-    private float timer;
+    public float spawnInterval = 3f;
+    private float timer = 0f;
 
     void Update()
     {
-        timer += Time.deltaTime;
+        if (Time.timeScale == 0f) return;
 
+        timer += Time.deltaTime;
         if (timer >= spawnInterval)
         {
             SpawnEnemy();
@@ -22,13 +19,27 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    void SpawnEnemy()
+    private void SpawnEnemy()
     {
         if (spawnPoints.Length == 0 || enemyPrefab == null) return;
 
         int randomIndex = Random.Range(0, spawnPoints.Length);
-        Transform selectedPoint = spawnPoints[randomIndex];
+        Transform spawnPoint = spawnPoints[randomIndex];
 
-        Instantiate(enemyPrefab, selectedPoint.position, selectedPoint.rotation);
+        GameObject newEnemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        
+        Obstacle obstacleComponent = newEnemy.GetComponent<Obstacle>();
+
+        if (obstacleComponent != null)
+        {
+            if (Random.value > 0.5f)
+            {
+                obstacleComponent.SetStrategy(new ZigzagMovement());
+            }
+            else
+            {
+                obstacleComponent.SetStrategy(new DirectMovement());
+            }
+        }
     }
 }
