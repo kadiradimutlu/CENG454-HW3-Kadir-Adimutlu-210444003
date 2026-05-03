@@ -41,4 +41,23 @@ public class Obstacle : MonoBehaviour
     {
         currentStrategy = newStrategy;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("EnergyCore"))
+        {
+            EnergyCore core = other.GetComponent<EnergyCore>();
+            if (core != null)
+            {
+                core.TakeDamage(10); 
+            }
+            Destroy(gameObject); 
+        }
+        else if (other.CompareTag("Bullet"))
+        {
+            other.gameObject.SetActive(false); 
+            
+            Destroy(gameObject); 
+        }
+    }
 }
