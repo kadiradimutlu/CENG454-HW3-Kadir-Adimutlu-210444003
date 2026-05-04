@@ -17,6 +17,8 @@ public class DefenderController : MonoBehaviour
     private Vector3 moveInput;
     private float verticalLookRotation = 0f;
 
+    private IWeapon currentWeapon;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -25,6 +27,8 @@ public class DefenderController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        currentWeapon = new BasicWeapon();
     }
 
     void Update()
@@ -49,7 +53,22 @@ public class DefenderController : MonoBehaviour
 
         if (Input.GetButtonDown("Fire1"))
         {
-            Shoot();
+            if (currentWeapon != null && bulletSpawnPoint != null)
+            {
+                currentWeapon.Fire(bulletSpawnPoint);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            currentWeapon = new DoubleShotWeapon(currentWeapon);
+            Debug.Log("SİLAH YÜKSELTİLDİ: Çift Mermi Aktif!");
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            currentWeapon = new BasicWeapon();
+            Debug.Log("SİLAH SIFIRLANDI: Tek Mermi Aktif!");
         }
     }
 
@@ -57,18 +76,5 @@ public class DefenderController : MonoBehaviour
     {
         Vector3 targetPosition = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(targetPosition);
-    }
-
-    void Shoot()
-    {
-        GameObject bullet = BulletPool.Instance.GetBullet();
-        
-        if (bullet != null && bulletSpawnPoint != null)
-        {
-            bullet.transform.position = bulletSpawnPoint.position;
-            bullet.transform.rotation = bulletSpawnPoint.rotation;
-            
-            bullet.SetActive(true);
-        }
     }
 }
