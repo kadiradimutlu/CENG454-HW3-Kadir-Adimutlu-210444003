@@ -2362,6 +2362,7 @@ GameObject:
   - component: {fileID: 1504933119}
   - component: {fileID: 1504933118}
   - component: {fileID: 1504933117}
+  - component: {fileID: 1504933123}
   m_Layer: 0
   m_Name: Defender
   m_TagString: Untagged
@@ -2382,6 +2383,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DefenderController
   moveSpeed: 10
+  crouchSpeed: 5
+  jumpForce: 5
+  groundCheckDistance: 1.1
   mouseSensitivity: 2
   playerCamera: {fileID: 330585546}
   bulletSpawnPoint: {fileID: 1651183789}
@@ -2432,9 +2436,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.4752949
-  m_Height: 1.9477998
+  m_Height: 2
   m_Direction: 1
-  m_Center: {x: -0.024705112, y: -0.10212129, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1504933120
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2509,6 +2513,31 @@ Transform:
   - {fileID: 330585546}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!143 &1504933123
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504933116}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1651183788
 GameObject:
   m_ObjectHideFlags: 0
@@ -2828,6 +2857,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1504933122}
     m_Modifications:
+    - target: {fileID: 3334763856463433948, guid: 713912b46b0763b49a839f8b18f51cb5, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 56878f7ff72ef9144b5c1dae50d18876, type: 2}
+    - target: {fileID: 3334763856463433948, guid: 713912b46b0763b49a839f8b18f51cb5, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8353203653604872220, guid: 713912b46b0763b49a839f8b18f51cb5, type: 3}
       propertyPath: m_Name
       value: Sci_Fi_Character_08_03
