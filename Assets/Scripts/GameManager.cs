@@ -1,10 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+
+    public static event Action<int> OnScoreChanged;
 
     [Header("UI Elements")]
     public GameObject gameOverPanel;
@@ -53,6 +56,7 @@ public class GameManager : MonoBehaviour
 
         UpdateScoreUI();
         UpdateTimerUI();
+        OnScoreChanged?.Invoke(currentScore);
     }
 
     void Update()
@@ -74,6 +78,7 @@ public class GameManager : MonoBehaviour
 
         currentScore += points;
         UpdateScoreUI();
+        OnScoreChanged?.Invoke(currentScore);
     }
 
     private void HandleCoreDamaged(int damageAmount)
@@ -99,11 +104,7 @@ public class GameManager : MonoBehaviour
         if (timerText == null) return;
 
         float remainingSeconds = Mathf.Max(0f, requiredSurvivalSeconds - elapsedSurvivalSeconds);
-
-        timerText.text =
-            "SURVIVE: " +
-            Mathf.CeilToInt(remainingSeconds) +
-            "s";
+        timerText.text = "SURVIVE: " + Mathf.CeilToInt(remainingSeconds) + "s";
     }
 
     private void HandleGameOver()
