@@ -1,5 +1,5 @@
-using UnityEngine;
-using TMPro; 
+﻿using UnityEngine;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -10,15 +10,21 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverPanel;
     public GameObject winPanel;
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI timerText;
 
-    [Header("Game Settings")]
-    public int winScore = 200;
+    [Header("Survival Settings")]
+    public float requiredSurvivalSeconds = 120f;
+    public float coreDamageTimePenaltySeconds = 5f;
 
     [Header("Player Settings")]
     public GameObject player;
 
     private int currentScore = 0;
+    private float elapsedSurvivalSeconds = 0f;
     private bool isGameOver = false;
+
+    public int CurrentScore => currentScore;
+    public bool IsGameOver => isGameOver;
 
     void Awake()
     {
@@ -26,13 +32,41 @@ public class GameManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    void Start()
+    void OnEnable()
     {
-        UpdateScoreUI();
+        EnergyCore.OnCoreDestroyed += HandleGameOver;
+        EnergyCore.OnCoreDamaged += HandleCoreDamaged;
     }
 
-    void OnEnable() { EnergyCore.OnCoreDestroyed += HandleGameOver; }
-    void OnDisable() { EnergyCore.OnCoreDestroyed -= HandleGameOver; }
+    void OnDisable()
+    {
+        EnergyCore.OnCoreDestroyed -= HandleGameOver;
+        EnergyCore.OnCoreDamaged -= HandleCoreDamaged;
+    }
+
+    void Start()
+    {
+        Time.timeScale = 1f;
+
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (winPanel != null) winPanel.SetActive(false);
+
+        UpdateScoreUI();
+        UpdateTimerUI();
+    }
+
+    void Update()
+    {
+        if (isGameOver) return;
+
+        elapsedSurvivalSeconds += Time.deltaTime;
+        UpdateTimerUI();
+
+        if (elapsedSurvivalSeconds >= requiredSurvivalSeconds)
+        {
+            HandleGameWin();
+        }
+    }
 
     public void AddScore(int points)
     {
@@ -40,12 +74,16 @@ public class GameManager : MonoBehaviour
 
         currentScore += points;
         UpdateScoreUI();
+    }
 
-        // KAZANMA KONTROLÜ
-        if (currentScore >= winScore)
-        {
-            HandleGameWin();
-        }
+    private void HandleCoreDamaged(int damageAmount)
+    {
+        if (isGameOver) return;
+
+        requiredSurvivalSeconds += coreDamageTimePenaltySeconds;
+        UpdateTimerUI();
+
+        Debug.Log("Core damaged. Survival target increased by " + coreDamageTimePenaltySeconds + " seconds.");
     }
 
     private void UpdateScoreUI()
@@ -56,6 +94,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void UpdateTimerUI()
+    {
+        if (timerText == null) return;
+
+        float remainingSeconds = Mathf.Max(0f, requiredSurvivalSeconds - elapsedSurvivalSeconds);
+
+        timerText.text =
+            "SURVIVE: " +
+            Mathf.CeilToInt(remainingSeconds) +
+            "s";
+    }
+
     private void HandleGameOver()
     {
         if (isGameOver) return;
@@ -63,7 +113,9 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("GAME OVER!");
         Time.timeScale = 0f;
+
         if (gameOverPanel != null) gameOverPanel.SetActive(true);
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -75,14 +127,16 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("YOU WIN!");
         Time.timeScale = 0f;
+
         if (winPanel != null) winPanel.SetActive(true);
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
 
     public void RestartGame()
     {
-        Time.timeScale = 1f; 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

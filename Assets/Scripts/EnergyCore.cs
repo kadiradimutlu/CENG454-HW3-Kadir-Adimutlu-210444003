@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 public class EnergyCore : MonoBehaviour, IDamageable
@@ -7,6 +7,7 @@ public class EnergyCore : MonoBehaviour, IDamageable
     private int currentHealth;
 
     public static event Action<int, int> OnCoreHealthChanged;
+    public static event Action<int> OnCoreDamaged;
     public static event Action OnCoreDestroyed;
 
     void Start()
@@ -19,11 +20,23 @@ public class EnergyCore : MonoBehaviour, IDamageable
     {
         if (currentHealth <= 0) return;
 
+        int previousHealth = currentHealth;
+
         currentHealth -= amount;
-        
-        if (currentHealth < 0) currentHealth = 0; 
-        
+
+        if (currentHealth < 0)
+        {
+            currentHealth = 0;
+        }
+
+        int actualDamage = previousHealth - currentHealth;
+
         OnCoreHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        if (actualDamage > 0)
+        {
+            OnCoreDamaged?.Invoke(actualDamage);
+        }
 
         if (currentHealth == 0)
         {
