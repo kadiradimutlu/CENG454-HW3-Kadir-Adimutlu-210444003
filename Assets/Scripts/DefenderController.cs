@@ -126,9 +126,9 @@ public class DefenderController : MonoBehaviour
 
         if (Input.GetButtonDown("Fire1"))
         {
-            if (currentWeapon != null && bulletSpawnPoint != null)
+            if (currentWeapon != null && bulletSpawnPoint != null && playerCamera != null)
             {
-                currentWeapon.Fire(bulletSpawnPoint);
+                currentWeapon.Fire(bulletSpawnPoint, playerCamera);
             }
         }
 

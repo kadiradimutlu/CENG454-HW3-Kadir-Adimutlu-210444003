@@ -9,8 +9,8 @@ public abstract class WeaponDecorator : IWeapon
         wrappedWeapon = weaponToWrap;
     }
 
-    public virtual void Fire(Transform spawnPoint)
+    public virtual void Fire(Transform spawnPoint, Transform playerCamera)
     {
-        wrappedWeapon.Fire(spawnPoint);
+        wrappedWeapon.Fire(spawnPoint, playerCamera);
     }
 }

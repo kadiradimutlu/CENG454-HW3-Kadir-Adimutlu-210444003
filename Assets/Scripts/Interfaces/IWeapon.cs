@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface IWeapon
 {
-    void Fire(Transform spawnPoint);
+    void Fire(Transform spawnPoint, Transform playerCamera);
 }
