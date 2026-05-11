@@ -1,16 +1,28 @@
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class Obstacle : MonoBehaviour
 {
     public float speed = 5f;
+    // Pürüzsüz dönüş hızı
+    public float rotationSpeed = 10f; 
     private Transform target;
     private IMovementStrategy currentStrategy;
+    private NavMeshAgent agent;
 
     public GameObject explosionPrefab;
     public int scoreValue = 10;
 
     void Start()
     {
+        agent = GetComponent<NavMeshAgent>();
+        
+        if (agent != null)
+        {
+            agent.updateRotation = false;
+        }
+
         EnergyCore core = Object.FindFirstObjectByType<EnergyCore>();
         if (core != null)
         {
@@ -20,9 +32,18 @@ public class Obstacle : MonoBehaviour
 
     void Update()
     {
-        if (currentStrategy != null && target != null)
+        if (currentStrategy != null && target != null && agent != null && agent.isOnNavMesh)
         {
-            currentStrategy.Move(transform, target, speed);
+            currentStrategy.Move(agent, target, speed);
+            
+            Vector3 lookDirection = (target.position - transform.position).normalized;
+            lookDirection.y = 0; 
+
+            if (lookDirection != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            }
         }
     }
 
