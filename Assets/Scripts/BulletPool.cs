@@ -1,46 +1,67 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletPool : MonoBehaviour
 {
     public static BulletPool Instance { get; private set; }
-    
+
     [Header("Pool Settings")]
     public GameObject bulletPrefab;
     public int poolSize = 20;
+    public bool allowExpansion = true;
 
-    private Queue<GameObject> pool = new Queue<GameObject>();
+    private readonly List<GameObject> pool = new List<GameObject>();
 
-    void Awake()
+    private void Awake()
     {
-        if (Instance == null) 
+        if (Instance == null)
         {
             Instance = this;
         }
-        else 
+        else
         {
             Destroy(gameObject);
         }
     }
 
-    void Start()
+    private void Start()
     {
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject obj = Instantiate(bulletPrefab, transform);
-            obj.SetActive(false); 
-            pool.Enqueue(obj);
+            CreateBullet();
         }
+    }
+
+    private GameObject CreateBullet()
+    {
+        if (bulletPrefab == null)
+        {
+            Debug.LogError("BulletPool is missing a bullet prefab reference.");
+            return null;
+        }
+
+        GameObject bullet = Instantiate(bulletPrefab, transform);
+        bullet.SetActive(false);
+        pool.Add(bullet);
+        return bullet;
     }
 
     public GameObject GetBullet()
     {
-        if (pool.Count > 0)
+        for (int i = 0; i < pool.Count; i++)
         {
-            GameObject obj = pool.Dequeue();
-            pool.Enqueue(obj);
-            return obj;
+            if (pool[i] != null && !pool[i].activeInHierarchy)
+            {
+                return pool[i];
+            }
         }
+
+        if (allowExpansion)
+        {
+            return CreateBullet();
+        }
+
+        Debug.LogWarning("BulletPool has no inactive bullets available.");
         return null;
     }
 }
