@@ -1,19 +1,26 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class ZigzagMovement : IMovementStrategy
 {
     private float zigzagFrequency = 3f;
     private float zigzagAmplitude = 2f;
 
-    public void Move(Transform enemyTransform, Transform targetTransform, float speed)
+    public void Move(NavMeshAgent agent, Transform targetTransform, float speed)
     {
         if (targetTransform == null) return;
 
-        Vector3 forwardDirection = (targetTransform.position - enemyTransform.position).normalized;
-        
-        Vector3 zigzagDirection = enemyTransform.right * Mathf.Sin(Time.time * zigzagFrequency) * zigzagAmplitude;
+        agent.SetDestination(targetTransform.position);
+        agent.speed = speed;
 
-        enemyTransform.position += (forwardDirection * speed + zigzagDirection) * Time.deltaTime;
-        enemyTransform.LookAt(targetTransform);
+        Vector3 pathDirection = agent.desiredVelocity.normalized;
+        
+        if (pathDirection != Vector3.zero)
+        {
+            Vector3 rightDirection = Vector3.Cross(Vector3.up, pathDirection).normalized;
+            Vector3 zigzagOffset = rightDirection * Mathf.Sin(Time.time * zigzagFrequency) * zigzagAmplitude;
+
+            agent.velocity = (pathDirection * speed) + zigzagOffset;
+        }
     }
 }

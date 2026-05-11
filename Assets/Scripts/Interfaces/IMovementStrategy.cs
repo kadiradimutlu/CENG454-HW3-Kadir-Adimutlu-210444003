@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public interface IMovementStrategy
 {
-    void Move(Transform enemyTransform, Transform targetTransform, float speed);
+    void Move(NavMeshAgent agent, Transform targetTransform, float speed);
 }
