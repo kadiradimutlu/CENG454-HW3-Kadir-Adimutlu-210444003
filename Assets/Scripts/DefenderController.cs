@@ -22,6 +22,12 @@ public class DefenderController : MonoBehaviour
     [Header("Shooting Settings")]
     public Transform bulletSpawnPoint;
 
+    [Header("Audio Settings")]
+    public AudioSource audioSource;
+    public AudioClip shootSound;
+    [Range(0f, 1f)]
+    public float shootVolume = 0.8f;
+
     [Header("Triple Shot Ultimate")]
     public int tripleShotUnlockScore = 50;
     public float tripleShotDuration = 15f;
@@ -78,6 +84,11 @@ public class DefenderController : MonoBehaviour
         if (playerCamera != null)
         {
             originalCameraLocalPosition = playerCamera.localPosition;
+        }
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
         }
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -178,8 +189,6 @@ public class DefenderController : MonoBehaviour
         {
             playerCamera.localPosition = originalCameraLocalPosition + Vector3.down * crouchCameraDrop;
         }
-
-        // Visual crouch animation is intentionally disabled because the imported animation causes model offset issues.
     }
 
     private void StopCrouch()
@@ -196,18 +205,25 @@ public class DefenderController : MonoBehaviour
         {
             playerCamera.localPosition = originalCameraLocalPosition;
         }
-
-        // Visual crouch animation is intentionally disabled because the imported animation causes model offset issues.
     }
 
     private void HandleShootingInput()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetMouseButtonDown(0))
         {
             if (currentWeapon != null && bulletSpawnPoint != null && playerCamera != null)
             {
                 currentWeapon.Fire(bulletSpawnPoint, playerCamera);
+                PlayShootSound();
             }
+        }
+    }
+
+    private void PlayShootSound()
+    {
+        if (audioSource != null && shootSound != null)
+        {
+            audioSource.PlayOneShot(shootSound, shootVolume);
         }
     }
 
@@ -239,8 +255,6 @@ public class DefenderController : MonoBehaviour
 
         float horizontalSpeed = new Vector3(moveInput.x, 0f, moveInput.z).magnitude;
         animator.SetFloat("Speed", horizontalSpeed);
-
-        // Jump animation is disabled because it creates visual offset problems with this character rig.
     }
 
     private void HandleScoreChanged(int newScore)
@@ -302,3 +316,4 @@ public class DefenderController : MonoBehaviour
         }
     }
 }
+
