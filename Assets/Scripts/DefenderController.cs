@@ -242,9 +242,7 @@ public class DefenderController : MonoBehaviour
         ultimateRemainingTime = tripleShotDuration;
 
         currentWeapon = new TripleShotWeapon(baseWeapon);
-
-        Debug.Log("ULTIMATE ACTIVE: Triple Shot enabled for " + tripleShotDuration + " seconds.");
-        UpdateUltimateUI();
+UpdateUltimateUI();
     }
 
     private void DeactivateUltimate()
@@ -254,9 +252,7 @@ public class DefenderController : MonoBehaviour
         ultimateRemainingTime = 0f;
 
         currentWeapon = baseWeapon;
-
-        Debug.Log("ULTIMATE ENDED: Weapon returned to single shot.");
-        UpdateUltimateUI();
+UpdateUltimateUI();
     }
 
     private void UpdateUltimateUI()
@@ -283,3 +279,4 @@ public class DefenderController : MonoBehaviour
         }
     }
 }
+
