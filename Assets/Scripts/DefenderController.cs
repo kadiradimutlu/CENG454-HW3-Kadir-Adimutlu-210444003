@@ -2,6 +2,7 @@
 using TMPro;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CapsuleCollider))]
 public class DefenderController : MonoBehaviour
 {
     [Header("Movement Settings")]
@@ -12,6 +13,7 @@ public class DefenderController : MonoBehaviour
 
     [Header("Crouch Settings")]
     public float crouchHeight = 1.2f;
+    public float crouchCameraDrop = 0.4f;
 
     [Header("Mouse Look Settings")]
     public float mouseSensitivity = 2f;
@@ -35,10 +37,12 @@ public class DefenderController : MonoBehaviour
 
     private float currentSpeed;
     private bool isGrounded;
+    private bool isCrouching;
 
     private CapsuleCollider capsuleCollider;
     private float originalHeight;
     private Vector3 originalCenter;
+    private Vector3 originalCameraLocalPosition;
 
     private IWeapon baseWeapon;
     private IWeapon currentWeapon;
@@ -68,14 +72,12 @@ public class DefenderController : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         capsuleCollider = GetComponent<CapsuleCollider>();
 
-        if (capsuleCollider != null)
+        originalHeight = capsuleCollider.height;
+        originalCenter = capsuleCollider.center;
+
+        if (playerCamera != null)
         {
-            originalHeight = capsuleCollider.height;
-            originalCenter = capsuleCollider.center;
-        }
-        else
-        {
-            Debug.LogError("MISSING CAPSULE COLLIDER!");
+            originalCameraLocalPosition = playerCamera.localPosition;
         }
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -139,7 +141,7 @@ public class DefenderController : MonoBehaviour
 
     private void HandleJumpInput()
     {
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump") && isGrounded && !isCrouching)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
@@ -149,33 +151,53 @@ public class DefenderController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            if (capsuleCollider != null)
-            {
-                capsuleCollider.height = crouchHeight;
-                capsuleCollider.center = new Vector3(
-                    originalCenter.x,
-                    originalCenter.y - (originalHeight - crouchHeight) / 2f,
-                    originalCenter.z
-                );
-            }
-
-            currentSpeed = crouchSpeed;
-
-            if (animator != null) animator.SetBool("IsCrouching", true);
+            StartCrouch();
         }
 
         if (Input.GetKeyUp(KeyCode.LeftControl))
         {
-            if (capsuleCollider != null)
-            {
-                capsuleCollider.height = originalHeight;
-                capsuleCollider.center = originalCenter;
-            }
-
-            currentSpeed = moveSpeed;
-
-            if (animator != null) animator.SetBool("IsCrouching", false);
+            StopCrouch();
         }
+    }
+
+    private void StartCrouch()
+    {
+        if (isCrouching) return;
+
+        isCrouching = true;
+        currentSpeed = crouchSpeed;
+
+        capsuleCollider.height = crouchHeight;
+        capsuleCollider.center = new Vector3(
+            originalCenter.x,
+            crouchHeight / 2f,
+            originalCenter.z
+        );
+
+        if (playerCamera != null)
+        {
+            playerCamera.localPosition = originalCameraLocalPosition + Vector3.down * crouchCameraDrop;
+        }
+
+        // Visual crouch animation is intentionally disabled because the imported animation causes model offset issues.
+    }
+
+    private void StopCrouch()
+    {
+        if (!isCrouching) return;
+
+        isCrouching = false;
+        currentSpeed = moveSpeed;
+
+        capsuleCollider.height = originalHeight;
+        capsuleCollider.center = originalCenter;
+
+        if (playerCamera != null)
+        {
+            playerCamera.localPosition = originalCameraLocalPosition;
+        }
+
+        // Visual crouch animation is intentionally disabled because the imported animation causes model offset issues.
     }
 
     private void HandleShootingInput()
@@ -217,7 +239,8 @@ public class DefenderController : MonoBehaviour
 
         float horizontalSpeed = new Vector3(moveInput.x, 0f, moveInput.z).magnitude;
         animator.SetFloat("Speed", horizontalSpeed);
-        animator.SetBool("IsJumping", !isGrounded);
+
+        // Jump animation is disabled because it creates visual offset problems with this character rig.
     }
 
     private void HandleScoreChanged(int newScore)
@@ -242,7 +265,7 @@ public class DefenderController : MonoBehaviour
         ultimateRemainingTime = tripleShotDuration;
 
         currentWeapon = new TripleShotWeapon(baseWeapon);
-UpdateUltimateUI();
+        UpdateUltimateUI();
     }
 
     private void DeactivateUltimate()
@@ -252,7 +275,7 @@ UpdateUltimateUI();
         ultimateRemainingTime = 0f;
 
         currentWeapon = baseWeapon;
-UpdateUltimateUI();
+        UpdateUltimateUI();
     }
 
     private void UpdateUltimateUI()
@@ -279,4 +302,3 @@ UpdateUltimateUI();
         }
     }
 }
-
