@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro; 
 
 public class CoreUIManager : MonoBehaviour
@@ -20,7 +20,6 @@ public class CoreUIManager : MonoBehaviour
         if (healthText != null)
         {
             healthText.text = "CORE HP: " + currentHealth + " / " + maxHealth;
-            Debug.Log("UI Updated: " + currentHealth);
-        }
+}
     }
 }

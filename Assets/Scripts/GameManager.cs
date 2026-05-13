@@ -85,9 +85,7 @@ public class GameManager : MonoBehaviour
 
         requiredSurvivalSeconds += coreDamageTimePenaltySeconds;
         UpdateTimerUI();
-
-        Debug.Log("Core damaged. Survival target increased by " + coreDamageTimePenaltySeconds + " seconds.");
-    }
+}
 
     private void UpdateScoreUI()
     {
@@ -139,4 +137,5 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
+
 
